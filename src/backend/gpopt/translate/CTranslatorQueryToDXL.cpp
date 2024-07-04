@@ -4217,7 +4217,7 @@ CTranslatorQueryToDXL::CreateDXLProjectNullsForGroupingSets(
 		// The assert expression is highly relative to the if condition below.
 		// We should figure out what the assert state really is and add it back.
 		GPOS_ASSERT_IMP(
-			nullptr == sort_grouping_col_mapping,
+			nullptr != sort_grouping_col_mapping,
 			nullptr != sort_grouping_col_mapping->Find(&sort_group_ref) &&
 				"Grouping column with no mapping");
 #endif
