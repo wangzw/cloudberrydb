@@ -145,12 +145,11 @@ private:
 	}
 
 public:
-	CDynamicPtrArray<T, CleanupFn>(const CDynamicPtrArray<T, CleanupFn> &) =
-		delete;
+	CDynamicPtrArray(const CDynamicPtrArray<T, CleanupFn> &) = delete;
 
 	// ctor
-	explicit CDynamicPtrArray<T, CleanupFn>(CMemoryPool *mp, ULONG min_size = 4,
-											ULONG expansion_factor = 10)
+	explicit CDynamicPtrArray(CMemoryPool *mp, ULONG min_size = 4,
+                              ULONG expansion_factor = 10)
 		: m_mp(mp),
 		  m_capacity(0),
 		  m_min_size(std::max((ULONG) 4, min_size)),
@@ -165,7 +164,7 @@ public:
 	}
 
 	// dtor
-	~CDynamicPtrArray<T, CleanupFn>() override
+	~CDynamicPtrArray() override
 	{
 		Clear();
 
