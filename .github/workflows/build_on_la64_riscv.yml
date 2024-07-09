@@ -49,7 +49,7 @@ jobs:
           cmd="sshpass -p vagrant ssh -F /dev/null -l root -o StrictHostKeyChecking=no -p 3957 target 'uname -a'"
           timeout 10m bash -c "until ${cmd}; do sleep 1; done"
           
-          sshpass -p vagrant scp -r ${GITHUB_WORKSPACE} -P 3957 root@target:/code
+          sshpass -p vagrant scp -P 3957 -r ${GITHUB_WORKSPACE} root@target:/code
 
       - name: "${{ matrix.name }}"
         uses: appleboy/ssh-action@v1.0.3
