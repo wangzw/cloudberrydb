@@ -1,0 +1,63 @@
+name: Build
+
+# Controls when the workflow will run
+on:
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+  push:
+    branches: [ "main" ]
+
+defaults:
+  run:
+    shell: bash -ileo pipefail {0}
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: Build on loongarch64
+            image: ghcr.io/wangzw/openeuler-24.03-la64
+          - name: Build on riscv64
+            image: ghcr.io/wangzw/openeuler-24.03-riscv64
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+    container:
+      image: oraclelinux:9
+
+    services:
+      runtime:
+        image: ${{ matrix.image }}
+        options: -e CORE=16 -e MEMORY=16 -e DISK=20 --name target --hostname target
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v4
+
+      - name: rsync deployments
+        uses: up9cloud/action-rsync@master
+        env:
+          HOST: target
+          PORT: 3957
+          PASSWORD: vagrant
+          SOURCE: ${GITHUB_WORKSPACE}
+          TARGET: /code/
+          VERBOSE: true
+          USER: root
+
+      - name: "${{ matrix.name }}"
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: target
+          port: 3957
+          username: root
+          password: vagrant
+          script: |
+            bash -eux
+            
+            env
+            cd /code
+            ls -la
