@@ -52,17 +52,8 @@ jobs:
         run: |
           cmd="sshpass -p vagrant ssh -F /dev/null -l root -o StrictHostKeyChecking=no -p 3957 target true &>/dev/null"
           timeout 10m bash -c "until ${cmd}; do sleep 1; done"
-
-      - name: rsync deployments
-        uses: up9cloud/action-rsync@master
-        env:
-          HOST: target
-          PORT: 3957
-          USER: root
-          PASSWORD: vagrant
-          SOURCE: ${GITHUB_WORKSPACE}
-          TARGET: /code/
-          VERBOSE: true
+          
+          sshpass -p vagrant scp -r ${GITHUB_WORKSPACE} -p 3957 root@target:/code
 
       - name: "${{ matrix.name }}"
         uses: appleboy/ssh-action@v1.0.3
