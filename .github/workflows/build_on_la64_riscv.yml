@@ -31,7 +31,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install tmate
+      - name: Install sshpass
         run: |
           yum install -y epel-release
           yum install -y sshpass
