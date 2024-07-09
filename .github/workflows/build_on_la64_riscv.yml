@@ -19,7 +19,7 @@ jobs:
       matrix:
         include:
           - name: Build on loongarch64
-            image: ghcr.io/wangzw/openeuler-24.03-la64
+            image: ghcr.io/wangzw/openeuler-24.03-loongarch64
           - name: Build on riscv64
             image: ghcr.io/wangzw/openeuler-24.03-riscv64
     # The type of runner that the job will run on
@@ -36,6 +36,11 @@ jobs:
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v4
+
+      - name: Wait for target instance started
+        run: |
+          cmd="ssh -F /dev/null -l root -o BatchMode=yes -o ConnectTimeout=600 target true &>/dev/null"
+          timeout 10m bash -c "until ${cmd}; do sleep 1; done"
 
       - name: rsync deployments
         uses: up9cloud/action-rsync@master
