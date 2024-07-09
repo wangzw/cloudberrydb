@@ -39,20 +39,14 @@ jobs:
 
       - name: Install tmate
         run: |
-          yum-config-manager --add-repo https://download.docker.com/linux/rhel/docker-ce.repo
           yum install -y epel-release
-          yum install -y tmate docker-ce-cli sshpass rsync
-
-      - name: Setup tmate session
-        uses: mxschmitt/action-tmate@v3
-        with:
-         install-dependencies: false
+          yum install -y tmate sshpass
 
       - name: Wait for target instance started
         run: |
           set -eux
           
-          cmd="sshpass -p vagrant ssh -F /dev/null -l root -o StrictHostKeyChecking=no -p 3957 target "uname -a""
+          cmd="sshpass -p vagrant ssh -F /dev/null -l root -o StrictHostKeyChecking=no -p 3957 target "uname -a"
           timeout 10m bash -c "until ${cmd}; do sleep 1; done"
           
           sshpass -p vagrant scp -r ${GITHUB_WORKSPACE} -p 3957 root@target:/code
