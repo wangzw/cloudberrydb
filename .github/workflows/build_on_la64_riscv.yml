@@ -58,6 +58,7 @@ jobs:
           port: 3957
           username: root
           password: vagrant
+          command_timeout: 60m
           script: |
             bash -eux
             cd /code
