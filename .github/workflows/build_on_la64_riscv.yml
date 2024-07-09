@@ -1,8 +1,6 @@
 name: Build
 
-# Controls when the workflow will run
 on:
-  # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
   push:
     branches: [ "main" ]
@@ -11,7 +9,6 @@ defaults:
   run:
     shell: bash -ileo pipefail {0}
 
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   build:
     strategy:
@@ -22,25 +19,22 @@ jobs:
             image: ghcr.io/wangzw/openeuler-24.03-loongarch64
           - name: Build on riscv64
             image: ghcr.io/wangzw/openeuler-24.03-riscv64
-    # The type of runner that the job will run on
     runs-on: ubuntu-latest
     container:
       image: oraclelinux:9
 
     services:
-      runtime:
+      target:
         image: ${{ matrix.image }}
         options: -e CORE=4 -e MEMORY=8 -e DISK=20 --name target --hostname target
 
-    # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v4
 
       - name: Install tmate
         run: |
           yum install -y epel-release
-          yum install -y tmate sshpass
+          yum install -y sshpass
 
       - name: Wait for target instance started
         run: |
@@ -58,7 +52,7 @@ jobs:
           port: 3957
           username: root
           password: vagrant
-          command_timeout: 60m
+          command_timeout: 240m
           script: |
             bash -eux
             cd /code
@@ -67,7 +61,7 @@ jobs:
             yum install -y apr-devel bison bzip2-devel cmake3 flex krb5-devel libcurl-devel libevent-devel 
             yum install -y libkadm5 libxml2-devel zstd-devel openssl-devel perl-ExtUtils-Embed perl-ExtUtils-MakeMaker perl-File-Compare 
             yum install -y python3 python3-devel python3-pip readline-devel rsync xerces-c-devel zlib-devel
-          
+            
             CPUS=$(grep -c ^processor /proc/cpuinfo)
             ./configure --with-perl --with-python --with-libxml --with-gssapi --prefix=`pwd`/inst
             
