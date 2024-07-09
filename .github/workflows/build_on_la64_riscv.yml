@@ -46,7 +46,7 @@ jobs:
         run: |
           set -eux
           
-          cmd="sshpass -p vagrant ssh -F /dev/null -l root -o StrictHostKeyChecking=no -p 3957 target "uname -a"
+          cmd="sshpass -p vagrant ssh -F /dev/null -l root -o StrictHostKeyChecking=no -p 3957 target 'uname -a'"
           timeout 10m bash -c "until ${cmd}; do sleep 1; done"
           
           sshpass -p vagrant scp -r ${GITHUB_WORKSPACE} -p 3957 root@target:/code
