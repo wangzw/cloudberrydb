@@ -50,6 +50,8 @@ jobs:
 
       - name: Wait for target instance started
         run: |
+          set -eux
+          
           cmd="sshpass -p vagrant ssh -F /dev/null -l root -o StrictHostKeyChecking=no -p 3957 target true &>/dev/null"
           timeout 10m bash -c "until ${cmd}; do sleep 1; done"
           
