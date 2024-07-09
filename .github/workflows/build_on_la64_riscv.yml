@@ -30,7 +30,7 @@ jobs:
     services:
       runtime:
         image: ${{ matrix.image }}
-        options: -e CORE=16 -e MEMORY=16 -e DISK=20 --name target --hostname target
+        options: -e CORE=4 -e MEMORY=8 -e DISK=20 --name target --hostname target
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
@@ -47,7 +47,7 @@ jobs:
           set -eux
           
           cmd="sshpass -p vagrant ssh -F /dev/null -l root -o StrictHostKeyChecking=no -p 3957 target 'uname -a' 2>/dev/null"
-          timeout 10m bash -c "until ${cmd}; do sleep 1; done"
+          timeout 20m bash -c "until ${cmd}; do sleep 1; done"
           
           sshpass -p vagrant scp -P 3957 -r ${GITHUB_WORKSPACE} root@target:/code
 
@@ -63,7 +63,7 @@ jobs:
             cd /code
             
             yum group install -y "Development Tools"
-            yum install -y apr-devel bison bzip2-devel cmake3 flex krb5-devel libcurl-devel libevent-devel libkadm5 libxml2-devel libzstd-devel openssl-devel perl-ExtUtils-Embed perl-ExtUtils-MakeMaker perl-File-Compare python3 python3-devel python3-pip python3-psutil python3-psutil python3-psycopg2 python3-pyyaml readline-devel rsync xerces-c-devel zlib-devel
+            yum install --disablerepo=everything-2203 -y apr-devel bison bzip2-devel cmake3 flex krb5-devel libcurl-devel libevent-devel libkadm5 libxml2-devel libzstd-devel openssl-devel perl-ExtUtils-Embed perl-ExtUtils-MakeMaker perl-File-Compare python3 python3-devel python3-pip python3-psutil python3-psutil python3-psycopg2 python3-pyyaml readline-devel rsync xerces-c-devel zlib-devel
          
             CPUS=$(grep -c ^processor /proc/cpuinfo)
             ./configure --with-perl --with-python --with-libxml --with-gssapi --prefix=`pwd`/inst
